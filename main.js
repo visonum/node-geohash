@@ -59,7 +59,7 @@ var SIGFIG_HASH_LENGTH = [0, 5, 7, 8, 11, 12, 13, 15, 16, 17, 18];
  * @param {Number} numberOfChars
  * @returns {String}
  */
-var encode = function (latitude, longitude, numberOfChars) {
+export var encode = function (latitude, longitude, numberOfChars) {
   if (numberOfChars === ENCODE_AUTO) {
     if (typeof(latitude) === 'number' || typeof(longitude) === 'number') {
       throw new Error('string notation required for auto precision.');
@@ -124,7 +124,7 @@ var encode = function (latitude, longitude, numberOfChars) {
  * @param {Number} bitDepth
  * @returns {Number}
  */
-var encode_int = function (latitude, longitude, bitDepth) {
+export var encode_int = function (latitude, longitude, bitDepth) {
 
   bitDepth = bitDepth || 52;
 
@@ -167,7 +167,7 @@ var encode_int = function (latitude, longitude, bitDepth) {
  * @param {String} hash_string
  * @returns {Array}
  */
-var decode_bbox = function (hash_string) {
+export var decode_bbox = function (hash_string) {
   var isLon = true,
     maxLat = MAX_LAT,
     minLat = MIN_LAT,
@@ -211,7 +211,7 @@ var decode_bbox = function (hash_string) {
  * @param {Number} bitDepth
  * @returns {Array}
  */
-var decode_bbox_int = function (hashInt, bitDepth) {
+export var decode_bbox_int = function (hashInt, bitDepth) {
 
   bitDepth = bitDepth || 52;
 
@@ -257,7 +257,7 @@ function get_bit(bits, position) {
  * @param {String} hashString
  * @returns {Object}
  */
-var decode = function (hashString) {
+export var decode = function (hashString) {
   var bbox = decode_bbox(hashString);
   var lat = (bbox[0] + bbox[2]) / 2;
   var lon = (bbox[1] + bbox[3]) / 2;
@@ -276,7 +276,7 @@ var decode = function (hashString) {
  * @param {Number} bitDepth
  * @returns {Object}
  */
-var decode_int = function (hash_int, bitDepth) {
+export var decode_int = function (hash_int, bitDepth) {
   var bbox = decode_bbox_int(hash_int, bitDepth);
   var lat = (bbox[0] + bbox[2]) / 2;
   var lon = (bbox[1] + bbox[3]) / 2;
@@ -298,7 +298,7 @@ var decode_int = function (hash_int, bitDepth) {
  * @param {Array} Direction as a 2D normalized vector.
  * @returns {String}
  */
-var neighbor = function (hashString, direction) {
+export var neighbor = function (hashString, direction) {
   var lonLat = decode(hashString);
   var neighborLat = lonLat.latitude
     + direction[0] * lonLat.error.latitude * 2;
@@ -320,7 +320,7 @@ var neighbor = function (hashString, direction) {
  * @param {String} hash_string
  * @returns {Array}
 */
-var neighbor_int = function (hash_int, direction, bitDepth) {
+export var neighbor_int = function (hash_int, direction, bitDepth) {
     bitDepth = bitDepth || 52;
     var lonlat = decode_int(hash_int, bitDepth);
     var neighbor_lat = lonlat.latitude + direction[0] * lonlat.error.latitude * 2;
@@ -340,7 +340,7 @@ var neighbor_int = function (hash_int, direction, bitDepth) {
  * @param {String} hash_string
  * @returns {encoded neighborHashList|Array}
  */
-var neighbors = function (hash_string) {
+export var neighbors = function (hash_string) {
 
     var hashstringLength = hash_string.length;
 
@@ -386,7 +386,7 @@ var neighbors = function (hash_string) {
  * @param {Number} bitDepth
  * @returns {encode_int'd neighborHashIntList|Array}
  */
-var neighbors_int = function(hash_int, bitDepth){
+export var neighbors_int = function(hash_int, bitDepth){
 
     bitDepth = bitDepth || 52;
 
@@ -433,7 +433,7 @@ var neighbors_int = function(hash_int, bitDepth){
  * @param {Number} numberOfChars
  * @returns {bboxes.hashList|Array}
  */
-var bboxes = function (minLat, minLon, maxLat, maxLon, numberOfChars) {
+export var bboxes = function (minLat, minLon, maxLat, maxLon, numberOfChars) {
   if (numberOfChars <= 0) {
     throw new Error("numberOfChars must be strictly positive");
   }
@@ -475,7 +475,7 @@ var bboxes = function (minLat, minLon, maxLat, maxLon, numberOfChars) {
  * @param {Number} bitDepth
  * @returns {bboxes_int.hashList|Array}
  */
-var bboxes_int = function(minLat, minLon, maxLat, maxLon, bitDepth){
+export var bboxes_int = function(minLat, minLon, maxLat, maxLon, bitDepth){
     bitDepth = bitDepth || 52;
 
     var hashSouthWest = encode_int(minLat, minLon, bitDepth);
@@ -509,7 +509,7 @@ function ensure_valid_lon(lon) {
   if (lon < MIN_LON)
     return MAX_LON + lon % MAX_LON;
   return lon;
-};
+}
 
 function ensure_valid_lat(lat) {
   if (lat > MAX_LAT)
@@ -517,25 +517,4 @@ function ensure_valid_lat(lat) {
   if (lat < MIN_LAT)
     return MIN_LAT;
   return lat;
-};
-
-var geohash = {
-  'ENCODE_AUTO': ENCODE_AUTO,
-  'encode': encode,
-  'encode_uint64': encode_int, // keeping for backwards compatibility, will deprecate
-  'encode_int': encode_int,
-  'decode': decode,
-  'decode_int': decode_int,
-  'decode_uint64': decode_int, // keeping for backwards compatibility, will deprecate
-  'decode_bbox': decode_bbox,
-  'decode_bbox_uint64': decode_bbox_int, // keeping for backwards compatibility, will deprecate
-  'decode_bbox_int': decode_bbox_int,
-  'neighbor': neighbor,
-  'neighbor_int': neighbor_int,
-  'neighbors': neighbors,
-  'neighbors_int': neighbors_int,
-  'bboxes': bboxes,
-  'bboxes_int': bboxes_int
-};
-
-module.exports = geohash;
+}
